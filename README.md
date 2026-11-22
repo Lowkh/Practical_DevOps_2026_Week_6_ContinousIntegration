@@ -5,7 +5,7 @@ Welcome to this guided, self-directed practical on continuous integration (CI).
 
 You will create a small Python calculator, automate its tests, investigate a deliberate defect, repair a pull request and integrate a small feature.
 
-Students work on Windows using a web browser. GitHub Actions executes the code on a hosted Windows runner. No local Git, Python, Docker or IDE installation is required for the required route.
+You will work on Windows using a web browser. GitHub Actions executes the code on a hosted Windows runner. No local Git, Python, Docker or IDE installation is required for the required activities.
 
 AI use is optional. If you choose to use an AI/LLM tool, evaluate its suggestions, verify results and acknowledge its assistance.
 
@@ -42,7 +42,7 @@ AI use is optional. If you choose to use an AI/LLM tool, evaluate its suggestion
 
 ## 1. Learning Outcomes
 
-By the end of the practical, you should be able to:
+By the end of this practical, you should be able to:
 
 1. Explain how CI provides automated feedback when changes are proposed or integrated.
 2. Identify a workflow, event, job, step, runner and action.
@@ -68,7 +68,7 @@ If you choose to use AI, you should also be able to:
 | Format | Guided self-learning followed by a small applied assessment |
 | Student environment | Windows, web browser and Microsoft Word |
 | Account | GitHub account permitted by the school |
-| Execution environment | GitHub-hosted Windows runner with Python 3.12 |
+| Execution environment | GitHub-hosted Windows runner with Python 3.xx |
 | Testing framework | Python’s built-in `unittest` module |
 | Local installation | None required for this route |
 | Guided activities | G1–G6 |
@@ -246,9 +246,14 @@ This practical runs automated tests. It does not package, release or deploy the 
 ### 6.1 Create the Repository
 
 1. Open [GitHub](https://github.com/) and sign in using the account permitted by the school.
-2. Select the `+` menu and choose **New repository**.
+2. Select the `+` menu and choose New repository.
 3. Name it `ci-practical-ab`, replacing `ab` with your initials. If that name already exists, use another suitable name such as `ci-practical-ab-actions`.
-4. Use the description: `A guided CI practical using Python and GitHub Actions.`
+4. Use the description:
+
+   ```text
+   A guided CI practical using Python and GitHub Actions.
+   ```
+
 5. Choose the visibility required by the school.
 6. Select the option to add a README and create the repository.
 7. Confirm that the default branch is named `main`. If it is not, rename it through the repository’s branch settings if permitted before continuing.
@@ -271,7 +276,7 @@ Starting version: five calculator tests.
 Final required version: seven calculator tests, including multiplication.
 ```
 
-3. Select **Commit changes**.
+3. Select Commit changes.
 4. Use the message `Personalise CI practical` and commit directly to `main`.
 5. Add the repository URL to your Word document.
 
@@ -291,11 +296,11 @@ Confirm you can create and edit files. If account or Actions restrictions preven
 
 For each file below:
 
-1. Open the repository’s **Code** page and select `main`.
-2. Select **Add file → Create new file**.
+1. Open the repository’s Code page and select `main`.
+2. Select Add file → Create new file.
 3. Enter the exact filename.
 4. Paste the supplied content without the Markdown fence lines.
-5. Select **Commit changes** and commit directly to `main` with the suggested message.
+5. Select Commit changes and commit directly to `main` with the suggested message.
 
 No workflow exists yet, so these starting commits will not run CI.
 
@@ -321,7 +326,11 @@ def divide(a, b):
     return a / b
 ```
 
-Commit message: `Add calculator functions`.
+Commit message:
+
+```text
+Add calculator functions
+```
 
 ### 7.3 Create `test_calculator.py`
 
@@ -353,7 +362,11 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-Commit message: `Add five calculator tests`.
+Commit message:
+
+```text
+Add five calculator tests
+```
 
 ### 7.4 Understand the Tests
 
@@ -365,7 +378,11 @@ Commit message: `Add five calculator tests`.
 | Division | `divide(8, 2)` returns `4`. |
 | Division by zero | `divide(8, 0)` raises the expected `ValueError`. |
 
-Each method whose name starts with `test_` is a test. `assertEqual` compares results. `assertRaisesRegex` verifies the exception type and message. The division-by-zero test passes when the expected exception occurs.
+Each method whose name starts with `test_` is a test.
+
+- `assertEqual` compares the actual result with the expected result.
+- `assertRaisesRegex` verifies the exception type and message.
+- The division-by-zero test passes when the expected exception occurs.
 
 ### Expected Files
 
@@ -386,8 +403,15 @@ Capture the file listing and the five test methods, keeping repository identific
 
 ### 8.1 Add the Workflow
 
-1. On `main`, select **Add file → Create new file**.
-2. Enter the full filename `.github/workflows/ci.yml`. The slashes create the folders.
+1. On `main`, select Add file → Create new file.
+2. Enter the full filename:
+
+   ```text
+   .github/workflows/ci.yml
+   ```
+
+   The slashes create the folders.
+
 3. Paste the workflow below.
 4. Replace both occurrences of `AB` with your initials: in `run-name` and `STUDENT_INITIALS`.
 5. Preserve spaces and indentation. Do not use tabs or include Markdown fences.
@@ -443,36 +467,52 @@ jobs:
 
 | Component | Purpose |
 | :--- | :--- |
+| `name` | Labels the workflow in GitHub Actions. |
+| `run-name` | Labels each run with your initials, event and branch/ref information. |
 | `push` on `main` | Runs when a commit reaches `main`, including a merge. |
 | `pull_request` targeting `main` | Runs when a pull request into `main` is opened or its branch is updated. |
 | `workflow_dispatch` | Allows optional manual execution; not required for submission. |
 | `permissions: contents: read` | Requests read-only access to repository contents. |
+| `env` | Supplies your initials to the workflow steps. |
 | `runs-on: windows-latest` | Uses a hosted Windows runner, not your own computer. |
 | `checkout` | Copies the repository onto the runner. |
-| `setup-python` | Selects Python 3.12. |
+| `setup-python` | Selects Python 3.xx; this workflow uses `3.12`. |
 | `Show run identity` | Prints your initials, repository, event, ref, commit and run ID. |
 | `unittest discover` | Finds `test_*.py` files and runs their tests. |
 | `-v` | Shows individual test names and results. |
 
-The versions following `@` are action versions, not Python versions. Major action tags and `windows-latest` are not fixed environment identifiers; this is a teaching workflow rather than a fully pinned production environment.
+The versions following `@` are action versions, not Python versions. Keep the action references as supplied.
 
-No external Python dependencies are required. There is no custom report helper or artifact upload in the required route; the Actions log contains the test results.
+The workflow deliberately uses a specific Python version in its executable configuration. General descriptions in this guide use Python 3.xx.
+
+Major action tags and `windows-latest` are not fixed environment identifiers; this is a teaching workflow rather than a fully pinned production environment.
+
+No external Python dependencies are required. There is no custom report helper or artifact upload in the required activities; the Actions log contains the test results.
 
 ### 8.3 Inspect the First Run
 
-1. Open **Actions** and select **Calculator CI** if necessary.
+1. Open Actions and select Calculator CI if necessary.
 2. Open the run for `Add calculator CI workflow`.
-3. Check that it has completed and open the **Test calculator** job.
-4. Expand **Show run identity**.
-5. Expand **Run automated tests**.
+3. Check that it has completed and open the Test calculator job.
+4. Expand Show run identity.
+5. Expand Run automated tests.
 
 The output should report five tests and `OK`.
 
-Confirm that five tests actually ran; an `OK` result with zero tests is not the required baseline.
+Confirm that five tests actually ran. An `OK` result with zero tests is not the required baseline.
 
 ### Learning Checkpoint
 
-Identify the event, runner and command used. Check your interpretation against the workflow and official documentation. If using AI, verify its explanation against your actual run. No extra written response is required.
+Identify:
+
+- The event that triggered the workflow.
+- The runner that executed the job.
+- The command that ran the tests.
+- The role of the checkout step.
+
+Check your interpretation against the workflow and official documentation. If using AI, verify its explanation against your actual run.
+
+No extra written response is required.
 
 ### Evidence for G3
 
@@ -488,7 +528,7 @@ Do not introduce the deliberate defect until the starting version genuinely pass
 
 ### 9.1 Create the Practice Branch
 
-1. Return to **Code** and select `main`.
+1. Return to Code and select `main`.
 2. Open the branch selector.
 3. Enter `practice-subtract-failure` and create the branch from `main`.
 4. Confirm the selector now shows that branch.
@@ -511,22 +551,33 @@ def subtract(a, b):
 ```
 
 3. Keep the tests unchanged.
-4. Commit to `practice-subtract-failure` with the message `Introduce deliberate subtraction defect`.
+4. Commit to `practice-subtract-failure` with the message:
+
+```text
+Introduce deliberate subtraction defect
+```
 
 This feature-branch push alone does not trigger the workflow because the `push` filter includes only `main`. Opening the pull request triggers the check.
 
 ### 9.3 Open the Pull Request
 
-1. Select **Compare & pull request**, or **Pull requests → New pull request**.
-2. Set base to `main` and compare to `practice-subtract-failure`.
+1. Select Compare & pull request, or Pull requests → New pull request.
+2. Set:
+   - Base: `main`
+   - Compare: `practice-subtract-failure`
 3. Use the title `AB — Investigate subtraction failure`, replacing `AB`.
-4. Add the description: `This practice change introduces a subtraction defect to inspect CI feedback.`
+4. Add the description:
+
+   ```text
+   This practice change introduces a subtraction defect to inspect CI feedback.
+   ```
+
 5. Create the pull request. Do not merge it.
-6. Open the check details from the pull request or locate the matching run in **Actions**.
+6. Open the check details from the pull request or locate the matching run in Actions.
 
 ### 9.4 Read the Failure
 
-Expand **Run automated tests**.
+Expand Run automated tests.
 
 The output should identify:
 
@@ -561,7 +612,7 @@ Capture the failed check and relevant assertion output with identification. Pres
 
 ### 10.2 Fix the Same Branch
 
-1. On **Code**, select `practice-subtract-failure`.
+1. On Code, select `practice-subtract-failure`.
 2. Edit `calculator.py`.
 3. Replace the defective function with:
 
@@ -573,29 +624,38 @@ def subtract(a, b):
 
 The comment leaves a small, intentional reviewed change after the arithmetic is restored.
 
-4. Commit to the same branch with the message `Fix subtraction after CI feedback`.
+4. Commit to the same branch with the message:
+
+   ```text
+   Fix subtraction after CI feedback
+   ```
+
 5. Return to the existing pull request. Do not open a second one for the repair.
 6. Inspect its latest completed checks.
 
 Expected result: all five tests pass. The earlier failed run remains in history.
 
-A rerun of the old failed commit would not repair the code. The new commit is what supplies the correction.
+A rerun of the old failed commit would not repair the code. The new commit supplies the correction.
 
 ### 10.3 Review and Merge
 
-1. Open **Files changed** and confirm the arithmetic is correct.
+1. Open Files changed and confirm the arithmetic is correct.
 2. Confirm the latest checks have passed.
 3. Select the available standard merge option and confirm the merge.
-4. Open **Actions**. A new push run on `main` should appear.
+4. Open Actions. A new push run on `main` should appear.
 5. Inspect that post-merge run in G6.
 
 ### Merge-Check Limitation
 
-A visible failed check is not necessarily an enforced merge block. Enforcement depends on repository rules and permissions. Configuring branch protection is outside the required route. Follow the school’s rules and inspect the latest checks before merging.
+A visible failed check is not necessarily an enforced merge block. Enforcement depends on repository rules and permissions.
+
+Configuring branch protection is outside the required activities. Follow the school’s rules and inspect the latest checks before merging.
 
 ### Evidence for G5
 
-Capture the repaired pull request showing successful checks and its merged state. Keep your initials or another identifier that demonstrates the work is your own visible.
+Capture the repaired pull request showing successful checks and its merged state.
+
+Keep your initials or another identifier that demonstrates the work is your own visible.
 
 ---
 
@@ -604,7 +664,12 @@ Capture the repaired pull request showing successful checks and its merged state
 1. Open the post-merge run on `main`.
 2. Confirm that it is associated with the merge, rather than the earlier failed run.
 3. Confirm the event is `push` and five tests pass.
-4. Expand **Show run identity** and identify your initials, repository, ref, commit and run ID.
+4. Expand Show run identity and identify:
+   - Your initials.
+   - Repository.
+   - Ref.
+   - Commit.
+   - Run ID.
 5. Compare the failed practice run with the repaired/latest run in the Actions history.
 
 ### Understand What You Are Viewing
@@ -612,18 +677,22 @@ Capture the repaired pull request showing successful checks and its merged state
 - The commit SHA links a result to a revision.
 - The run ID identifies a particular workflow run.
 - The event explains why the workflow started.
-- A pull-request run can use GitHub’s test merge commit rather than the source branch’s last commit; use the event and pull-request context as well as the SHA.
+- A pull-request run can use GitHub’s test merge commit rather than the source branch’s last commit. Use the event and pull-request context as well as the SHA.
 - The Actions log is the evidence source for this practical. A separate downloadable report is not required.
 
 ### Evidence for G6
 
-Capture the post-merge run showing a successful five-test result and relevant run identity. You may reference suitable evidence already captured under G5 instead of duplicating it.
+Capture the post-merge run showing a successful five-test result and relevant run identity.
+
+You may reference suitable evidence already captured under G5 instead of duplicating it.
 
 ---
 
 ## 12. Small Applied Practical Assessment
 
-Parts A and B form one feature task, one branch and one pull request. Retain all existing functions, tests and the workflow. AI use is optional.
+Parts A and B form one feature task, one branch and one pull request.
+
+Retain all existing functions, tests and the workflow. AI use is optional.
 
 ### Part A — Add Multiplication and Its Tests
 
@@ -640,7 +709,13 @@ def multiply(a, b):
     return a * b
 ```
 
-Keep the existing initials, subtraction comment and other functions. Commit to `assessment-multiply` with the message `Add multiplication`.
+Keep the existing initials, subtraction comment and other functions.
+
+Commit to `assessment-multiply` with the message:
+
+```text
+Add multiplication
+```
 
 #### A3. Add Two Tests
 
@@ -652,7 +727,9 @@ Change its calculator import to:
 from calculator import add, subtract, divide, multiply
 ```
 
-Inside `TestCalculator`, add the following methods before the final `if __name__` block. Match the existing indentation: four spaces before each `def` and eight before each assertion.
+Inside `TestCalculator`, add the following methods before the final `if __name__` block.
+
+Match the existing indentation: four spaces before each `def` and eight before each assertion.
 
 ```python
     def test_multiply_positive_numbers(self):
@@ -662,7 +739,11 @@ Inside `TestCalculator`, add the following methods before the final `if __name__
         self.assertEqual(multiply(7, 0), 0)
 ```
 
-Commit to the same feature branch with the message `Test multiplication and zero boundary`.
+Commit to the same feature branch with the message:
+
+```text
+Test multiplication and zero boundary
+```
 
 Do both file edits before opening the pull request so the function and its tests are checked together.
 
@@ -673,7 +754,12 @@ Capture the added function and tests with repository identification. Use one or 
 ### Part B — Verify and Integrate the Feature
 
 1. Open a pull request from `assessment-multiply` into `main`.
-2. Include your initials in the title, for example `AB — Add tested multiplication`.
+2. Include your initials in the title, for example:
+
+   ```text
+   AB — Add tested multiplication
+   ```
+
 3. Inspect the changed files and latest checks.
 4. Confirm that seven tests pass: the original five plus two multiplication tests.
 5. Merge after the latest checks pass.
@@ -683,7 +769,9 @@ Do not delete or skip existing tests, change correct expected values or configur
 
 #### Evidence for Part B
 
-Capture the seven-test result, merged pull request and successful post-merge run with identification. If a restriction prevents completion, record its actual state honestly.
+Capture the seven-test result, merged pull request and successful post-merge run with identification.
+
+If a restriction prevents completion, record its actual state honestly.
 
 ### Expected Test Progression
 
@@ -696,7 +784,9 @@ Capture the seven-test result, merged pull request and successful post-merge run
 | Assessment feature | 7 | All pass |
 | Assessment post-merge | 7 | All pass |
 
-These counts refer to test methods, not assertions or workflow steps. No additional deliberate defect is required for the assessment.
+These counts refer to test methods, not assertions or workflow steps.
+
+No additional deliberate defect is required for the assessment.
 
 ---
 
@@ -775,7 +865,11 @@ Wrong result? → Check the run’s commit and latest branch changes.
 
 ### 16.2 Account or Actions Restrictions
 
-Confirm you are in your own repository and have the required access. Review the school’s policy. Do not enable billing, create an unauthorised runner or bypass restrictions. Capture the limitation and record execution as incomplete.
+Confirm you are in your own repository and have the required access. Review the school’s policy.
+
+Do not enable billing, create an unauthorised runner or bypass restrictions.
+
+Capture the limitation and record execution as incomplete.
 
 ### 16.3 No Run Appears
 
@@ -791,7 +885,12 @@ A feature-branch commit with no open pull request does not meet this guide’s a
 
 ### 16.4 YAML Is Invalid
 
-Compare with G3. Preserve colons, indentation and `${{ ... }}` expressions. Use spaces rather than tabs. Do not copy Markdown fences into `ci.yml`.
+Compare with G3.
+
+- Preserve colons and indentation.
+- Preserve `${{ ... }}` expressions.
+- Use spaces rather than tabs.
+- Do not copy Markdown fences into `ci.yml`.
 
 If the school’s policy disallows a supplied action version, record the restriction and use only an authorised alternative.
 
@@ -809,25 +908,52 @@ Do not name a project file `unittest.py`, because it can conflict with the testi
 
 ### 16.6 Zero Tests or an Unexpected Count
 
-Check the filename `test_calculator.py`, inheritance from `unittest.TestCase` and method names beginning with `test_`.
+Check:
 
-This practical uses the standard unittest command. Always inspect the number executed: five for the starting version and seven after the assessment feature. An `OK` status with zero tests is not adequate evidence.
+- The filename is `test_calculator.py`.
+- The test class inherits from `unittest.TestCase`.
+- Test method names begin with `test_`.
+
+This practical uses the standard unittest command. Always inspect the number executed: five for the starting version and seven after the assessment feature.
+
+An `OK` status with zero tests is not adequate evidence.
 
 ### 16.7 An Assertion Fails
 
-Identify the test name, inputs, expected result and actual result. Compare the function with its intended behaviour. Correct the implementation when it is wrong; do not weaken a valid test to hide the defect.
+Identify:
+
+1. The test name.
+2. Inputs.
+3. Expected result.
+4. Actual result.
+
+Compare the function with its intended behaviour.
+
+Correct the implementation when it is wrong; do not weaken a valid test to hide the defect.
 
 ### 16.8 The Pull Request Still Shows Failure
 
-Open its latest run and check the commit. Confirm the repair was committed to its compare branch. Old failed runs remain in history; they do not disappear after a later successful run.
+Open its latest run and check the commit.
+
+Confirm the repair was committed to its compare branch.
+
+Old failed runs remain in history; they do not disappear after a later successful run.
 
 ### 16.9 A Run Is Queued or Has Not Completed
 
-Check the displayed runner and account status messages. Avoid creating duplicate runs. Do not claim an unfinished run has passed. If access restrictions prevent completion, capture the state and identify the unfinished activity.
+Check the displayed runner and account status messages.
+
+Avoid creating duplicate runs. Do not claim an unfinished run has passed.
+
+If access restrictions prevent completion, capture the state and identify the unfinished activity.
 
 ### 16.10 Identification Is Not Visible
 
-Check the run title and `STUDENT_INITIALS` in `ci.yml`. Expand **Show run identity** or show the same run’s identity in a second browser window beside the test output. Do not add identification afterwards.
+Check the run title and `STUDENT_INITIALS` in `ci.yml`.
+
+Expand Show run identity or show the same run’s identity in a second browser window beside the test output.
+
+Do not add identification afterwards.
 
 ### 16.11 Optional AI Troubleshooting Prompt
 
@@ -856,11 +982,15 @@ Do not suggest disabling checks, exposing credentials or bypassing policy.
 Explain how I can verify the result in my own run.
 ```
 
+The prompt uses the specific Python version configured in the supplied workflow so that troubleshooting advice matches the actual environment.
+
 Compare advice with your files and official documentation. A plausible explanation is not proof of successful execution.
 
 ### 16.12 Record Partial Progress Honestly
 
-Capture the actual error or state with your initials or another identifier that demonstrates the work is your own. Place it under the correct heading, briefly identify the unfinished step and declare any AI assistance used.
+Capture the actual error or state with your initials or another identifier that demonstrates the work is your own.
+
+Place it under the correct heading, briefly identify the unfinished step and declare any AI assistance used.
 
 ---
 
@@ -902,7 +1032,9 @@ Capture the actual error or state with your initials or another identifier that 
 
 ## 18. After Capturing Your Evidence
 
-Keep the repository, runs and pull requests until review is complete and any retention instructions issued by the school have been met. No local server, container or self-hosted runner needs to be stopped for this route.
+Keep the repository, runs and pull requests until review is complete and any retention instructions issued by the school have been met.
+
+No local server, container or self-hosted runner needs to be stopped for this route.
 
 ### Project File Summary
 
@@ -922,9 +1054,9 @@ The teaching guide itself can be published as a single `README.md` in a separate
 
 ### Optional Follow-Up
 
-These are not required and need no additional submission evidence:
+These activities are not required and need no additional submission evidence:
 
-- Manually run **Actions → Calculator CI → Run workflow**, choose `main` and inspect a `workflow_dispatch` run.
+- Manually run Actions → Calculator CI → Run workflow, choose `main` and inspect a `workflow_dispatch` run.
 - Add a fractional-division test such as checking that `divide(7, 2)` returns `3.5`.
 - Explore GitHub’s documentation on storing test results as artifacts.
 
@@ -937,6 +1069,6 @@ Complete the required activities, evidence and reflection before attempting opti
 - [GitHub Actions quickstart](https://docs.github.com/en/actions/writing-workflows/quickstart)
 - [Building and testing Python](https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-python)
 - [Events that trigger workflows](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows)
-- [Python unittest documentation](https://docs.python.org/3.12/library/unittest.html)
+- [Python unittest documentation](https://docs.python.org/3/library/unittest.html)
 
 Use the equivalent control if the GitHub website displays different interface wording.
